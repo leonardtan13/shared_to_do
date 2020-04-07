@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": "/Applications/MAMP/htdocs/shared_to_do/backend/venv/bin/python3",
+    "python.linting.pylintEnabled": false,
+    "python.linting.banditEnabled": false,
+    "python.linting.enabled": true,
+    "python.linting.mypyEnabled": true
+}
