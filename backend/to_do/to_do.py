@@ -11,8 +11,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 CORS(app)
 
-class To_do(db.Model):
-   __tablename__ = "to_do"
+class Todo(db.Model):
+   __tablename__ = "todo"
    id = db.Column(db.Integer, primary_key=True)
    title = db.Column(db.String(256), nullable=False)
    description = db.Column(db.Text())
@@ -29,15 +29,50 @@ class To_do(db.Model):
 db.drop_all()
 db.create_all()
 
-todo1 = To_do(title="do work",description="time to study")
+todo1 = Todo(title="do work",description="time to study")
 db.session.add(todo1)
 db.session.commit()
 
-# need to figure out a way to jsonify the things
-@app.route('/')
+
+@app.route('/todo')
 def get_all():
-   todo_list = [todo.json() for todo in To_do.query.all()]
+   todo_list = [todo.json() for todo in Todo.query.all()]
    return jsonify(todo_list)
+
+@app.route('/todo', methods=["POST"])
+def add_todo():
+    data = request.get_json()
+    newTodo = Todo(**data)
+    try:
+        db.session.add(newTodo)
+        db.session.commit()
+    except:
+        return jsonify({
+            "message": "error adding todo"
+        }), 500
+    return jsonify({
+        "message" : "successfully added todo"
+    }), 201
+
+@app.route('/todo/<int:id>', methods=["DELETE"])
+def delete_todo(id):
+    todo = Todo.query.filter_by(id=id).first_or_404()
+    try:
+        db.session.delete(todo)
+        db.session.commit
+    except:
+        return jsonify({
+            "message": "error adding todo"
+        }), 500
+    return jsonify({
+        "message" : "successfully deleted todo"
+    }), 200
+
+# @app.route('/todo', methods = ['PUT'])
+# def update():
+
+
+
    
 
 if __name__ == "__main__":
