@@ -18,6 +18,14 @@ class To_do(db.Model):
    description = db.Column(db.Text())
    done = db.Column(db.Boolean, default=False)
 
+   def json(self):
+       return {
+           "id": self.id,
+           "title": self.title,
+           "description": self.description,
+           "done" : self.done,
+       }
+
 db.drop_all()
 db.create_all()
 
@@ -28,9 +36,8 @@ db.session.commit()
 # need to figure out a way to jsonify the things
 @app.route('/')
 def get_all():
-   todo_list = [todo for todo in To_do.query.all()]
-   todo_json = json.dumps(todo_list)
-   return jsonify(todo_json)
+   todo_list = [todo.json() for todo in To_do.query.all()]
+   return jsonify(todo_list)
    
 
 if __name__ == "__main__":
