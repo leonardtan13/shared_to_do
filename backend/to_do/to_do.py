@@ -68,8 +68,32 @@ def delete_todo(id):
         "message" : "successfully deleted todo"
     }), 200
 
-# @app.route('/todo', methods = ['PUT'])
-# def update():
+@app.route('/todo/<int:id>', methods = ['PUT'])
+def update(id):
+    data = request.get_json()
+    todo = Todo.query.filter_by(id=id).first_or_404()
+    if ("title" in data):
+        todo.title = data["title"]
+    if ("description" in data):
+        todo.description = data["description"]
+    if ("done" in data):
+        todo.done = data["done"]
+    try:
+        db.session.commit()
+    except:
+        return jsonify({
+            "message": "error updating todo"
+        }), 500
+    return jsonify({
+        "message" : "successfully updated todo",
+        "todo": todo.json()
+    }), 200
+
+
+    
+
+
+
 
 
 
